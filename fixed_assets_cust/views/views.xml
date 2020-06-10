@@ -9,6 +9,10 @@
                 <xpath expr="//form/sheet/group/group/field[@name='acquisition_date']" position="after">  
                     <field name="acc_nineteen"/>
                 </xpath>
+                <xpath expr="//form/header" position="inside">
+                    <!-- object is used if you want to call a method which is written in .py file. -->
+                    <button name="gl_nineteen" string="GL - 2019" type="object" class="oe_highlight"/>
+                </xpath>
             </field>
       </record>
   </data>

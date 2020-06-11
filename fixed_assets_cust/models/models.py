@@ -51,3 +51,17 @@ class AccountAsset(models.Model):
         new_moves = self.env['account.move'].create(newline_vals_list)
         for move in new_moves:
             move.write({'ref': self.name, 'asset_ref_id': self.id, 'asset_id': False, 'from_custom_asset': True})
+
+                        
+    def _set_value(self):
+        for record in self:
+            record.acquisition_date = min(record.original_move_line_ids.mapped('date') + [record.prorata_date or record.first_depreciation_date or fields.Date.today()])
+            record.first_depreciation_date = record._get_first_depreciation_date()
+            record.value_residual = record.original_value - record.salvage_value - record.acc_nineteen
+            record.name = record.name or (record.original_move_line_ids and record.original_move_line_ids[0].name or '')
+            if not record.asset_type and 'asset_type' in self.env.context:
+                record.asset_type = self.env.context['asset_type']
+            if not record.asset_type and record.original_move_line_ids:
+                account = record.original_move_line_ids.account_id
+                record.asset_type = account.asset_type
+            record._onchange_depreciation_account()

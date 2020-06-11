@@ -36,9 +36,7 @@ class AccountAsset(models.Model):
 
     def compute_custom_depreciation_board(self):
         self.ensure_one()
-        depreciation_number = self.method_number
-        if self.prorata:
-            depreciation_number += 1
+        depreciation_number = 1
         starting_sequence = 0
         amount_to_depreciate = self.acc_nineteen
         depreciation_date = self.first_depreciation_date
@@ -52,4 +50,4 @@ class AccountAsset(models.Model):
             newline_vals_list.append(newline_vals)
         new_moves = self.env['account.move'].create(newline_vals_list)
         for move in new_moves:
-            move.write({'asset_ref_id': self.id, 'asset_id': False, 'from_custom_asset': True})
+            move.write({'ref': self.name, 'asset_ref_id': self.id, 'asset_id': False, 'from_custom_asset': True})

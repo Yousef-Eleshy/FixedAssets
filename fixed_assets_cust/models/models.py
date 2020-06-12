@@ -65,3 +65,10 @@ class AccountAsset(models.Model):
                 account = record.original_move_line_ids.account_id
                 record.asset_type = account.asset_type
             record._onchange_depreciation_account()
+            
+    
+#    @api.depends('value_residual', 'salvage_value', 'children_ids.book_value', 'acc_nineteen')
+#    def _compute_book_value(self):
+#        for record in self:
+#            record.book_value = record.value_residual + record.salvage_value + sum(record.children_ids.mapped('book_value')) + record.acc_nineteen
+#            record.gross_increase_value = sum(record.children_ids.mapped('original_value'))

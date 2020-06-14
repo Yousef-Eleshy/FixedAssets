@@ -97,12 +97,13 @@ class assets_report(models.AbstractModel):
             else:
                 asset_depreciation_rate = ('{:.2f} %').format(float(al['asset_method_progress_factor']) * 100)
 
+            asset_object = self.env['account.asset'].browse(int(al['asset_id']))
             depreciation_opening = al['depreciated_start'] - al['depreciation']
-            depreciation_closing = al['depreciated_end']
+            depreciation_closing = (al['depreciated_end']) + (asset_object.acc_nineteen if asset_object else 0)
             depreciation_minus = 0.0
 
             asset_opening = al['asset_original_value'] if al['max_date_before'] else 0.0
-            asset_object = self.env['account.asset'].browse(int(al['asset_id']))
+    
             print("al", asset_object)
             asset_add = 0.0 if al['max_date_before'] else al['asset_original_value']
             asset_minus = 0.0
@@ -124,7 +125,7 @@ class assets_report(models.AbstractModel):
                 asset_minus = asset_closing
                 asset_closing = 0.0
 
-            asset_gross = asset_closing - depreciation_closing - (asset_object.acc_nineteen if asset_object else 0)
+            asset_gross = asset_closing - depreciation_closing
 
             total = [x + y for x, y in zip(total,
                                            [asset_opening, asset_add, asset_minus, asset_closing, depreciation_opening,
